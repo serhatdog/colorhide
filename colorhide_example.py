@@ -84,7 +84,7 @@ print(readit(imread("encodedimage.png"), "my_key"))
 #300 letter
 #0.33/s write (opencv - png - compression 0)
 #0.05/s read
-#19.88/s total
+#0.38/s total
 
 #15.850 letter
 #17.37/s write (opencv - png - compression 0)
