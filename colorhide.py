@@ -1,27 +1,19 @@
 import numpy as np
 from string import printable
+from numba import jit
 
-def hideit(text, secure_key = None, keymap = None): 
-
-    if not keymap:
-
-        keymap = dict()
-        
-        for char in range(len(printable)):
-            keymap[printable[char]] = char
-
-    canvas = np.zeros(
+@jit
+def fill(lenght, color):
+    
+    canvas = np.zeros( #GENERATING IMAGE
         (
-            len(text), 128, 3
+            lenght, 128, 3
         ),
         np.uint8
     )
 
-    color = sum([keymap[secure_key[i]] + i ^ 2 for i in range(len(secure_key))])
-    color = ((color*2)%255, (color*3)%255, (color*4)%255)
-
     for y in range(len(canvas)):
-        for x in range(len(canvas[0])):
+        for x in range(len(canvas[0])): #FILLING THE IMAGE WITH RANDOM COLORS
 
             if np.random.randint(0,2) == 1: color1 = np.random.randint(color[0]+1, 255)
             else: color1 = np.random.randint(0, color[0]-1)
@@ -33,6 +25,22 @@ def hideit(text, secure_key = None, keymap = None):
             else: color3 = np.random.randint(0, color[2]-1)
 
             canvas[y][x] = color1, color2, color3
+
+    return canvas
+
+def hideit(text, secure_key = None, keymap = None): 
+
+    if not keymap:
+
+        keymap = dict()
+        
+        for char in range(len(printable)):
+            keymap[printable[char]] = char
+
+    color = sum([keymap[secure_key[i]] + i ^ 2 for i in range(len(secure_key))])
+    color = ((color*2)%255, (color*3)%255, (color*4)%255)
+
+    canvas = fill(len(text), color)
 
     for y in range(len(canvas)):
         canvas[y][keymap[text[y]]] = np.array([color])
